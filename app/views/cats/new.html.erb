@@ -1,0 +1,57 @@
+<%= render partial: "form", locals: {cat: @cat, colors: @colors} %>
+
+<!--<h1>Add a new cat!</h1>
+
+<form action="<%= cats_url %>" method="post">
+
+  <label>
+    Name
+    <input type="text" name="cat[name]" value="<%= @cat.name %>">
+  </label>
+  <br>
+
+  <label>
+    Birthday
+    <input type="date" name="cat[birth_date]" value="<%= @cat.birth_date %>">
+  </label>
+  <br>
+
+  <label>
+    Age
+    <input type="text" name="cat[age]" value="<%= @cat.age %>">
+  </label>
+  <br>
+
+  <label>
+    <strong>Sex</strong>
+    <br>
+    <label>
+      Male<input type="radio" name="cat[sex]" value="M">
+    </label>
+
+    <label>
+      Female<input type="radio" name="cat[sex]" value="F">
+    </label>
+
+  </label>
+  <br>
+
+  <label>
+    Color
+    <select name="cat[color]">
+      <option value="blank" selected> </option>
+      <% @colors.each do |color| %>
+        <option value="<%= color %>>"><%= color %></option>
+      <% end %>
+    </select>
+  </label>
+  <br>
+
+  <textarea rows="10" cols="20" name="cat[description]">
+    Tell us about your cat!
+  </textarea>
+
+  <br>
+  <button>Save Cat</button>
+
+</form> -->
