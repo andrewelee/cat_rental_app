@@ -5,10 +5,10 @@ class CatRentalRequest < ActiveRecord::Base
   validate :no_overlapping_requests
 
   belongs_to(
-  :cat,
-  :class_name => "Cat",
-  :foreign_key => :cat_id,
-  :primary_key => :id
+    :cat,
+    :class_name => "Cat",
+    :foreign_key => :cat_id,
+    :primary_key => :id
   )
 
   def good_date_range
@@ -18,56 +18,49 @@ class CatRentalRequest < ActiveRecord::Base
   end
 
   def overlapping_requests
-    our_cat_requests = CatRentalRequest.select("cat_rental_requests.id")
-      .joins("JOIN cats ON cat_id = cats.id")
-      .where("cat_id = ?", self.cat_id)
+    our_cat_requests = CatRentalRequest.joins(
+    "JOIN cats ON cat_id = cats.id")
+    .where("cat_id = ?", self.cat_id)
 
-    overlapping_approved = CatRentalRequest.select("cat_rental_requests.id")
-      .where(
-      "(cat_rental_requests.end_date >= #{self.start_date} OR
-      cat_rental_requests.start_date <= #{self.end_date}) AND
-      cat_rental_requests.status = 'APPROVED'"
+    overlapping = CatRentalRequest.where(
+      "NOT (cat_rental_requests.start_date >= #{self.end_date} OR cat_rental_requests.end_date <= #{self.start_date})"
       )
 
+      p overlapping
+
+      # AND cat_rental_requests.status = 'APPROVED'
+
+      overlapping_requests = []
+
       our_cat_requests.each do |request|
-        p request
-        return false if overlapping_approved.include?(request)
+        if overlapping.include?(request)
+          overlapping_requests << request
+        end
       end
 
-      return true
-      # our_cat_requests.select("cat_rental_request.id")
-      #   .where("cat_rental_request.id IN #{overlapping_approved}")
+      overlapping_requests
+  end
 
+  def overlapping_approved
+    overlapping_requests.select { |request| request.status == "APPROVED" }
+  end
 
+  def approve!
+    self.overlapping_requests.each do |request|
+      request.deny!
+    end
 
+    self.status = "APPROVED"
+    self.save!
+  end
 
-
-    # mysql = (<<-SQL)
-   #    SELECT
-   #      cat_rental_requests.id
-   #    FROM
-   #      cat_rental_requests
-   #    JOIN
-   #      cats ON cat_id = cats.id
-   #    WHERE
-   #      cat_id = #{:cat_id} AND cat_rental_requests.id IN (
-   #      SELECT
-   #        cat_rental_requests.id
-   #      FROM
-   #        cat_rental_requests
-   #      WHERE
-   #        (cat_rental_requests.end_date >= #{:start_date} OR
-   #        cat_rental_requests.start_date =< #{:end_date}) AND
-   #        cat_rental_requests.status = "APPROVED" AND
-   #        cat_rental_requests.id != #{:id}
-   #      )
-   #  SQL
-
-
+  def deny!
+    self.status = "DENIED"
+    self.save!
   end
 
   def no_overlapping_requests
-    unless self.overlapping_requests
+    unless self.overlapping_approved.empty?
       errors.add(:start_date, "Your request overlaps with an approved request!")
     end
   end

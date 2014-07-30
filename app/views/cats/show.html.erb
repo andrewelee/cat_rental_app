@@ -22,3 +22,25 @@
     <td><%=@cat.description%><td>
   </tr>
 </table>
+<br>
+
+<table>
+  Current rental requests for <%= @cat.name %>
+  <% @cat.requests.sort_by { |request| request.start_date }.each do |request| %>
+    <% if request.status == "APPROVED" %>
+    <tr>
+      <td><%= request.start_date %></td>
+      <td><%= request.end_date %></td>
+    </tr>
+    <% end %>
+  <% end %>
+
+</table>
+<br>
+
+<form action="<%= cat_url(@cat) %>" method="post">
+  <input type="hidden" name="_method" value="delete">
+
+  <button>Delete this cat</button>
+
+</form>

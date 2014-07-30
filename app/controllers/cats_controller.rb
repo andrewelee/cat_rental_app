@@ -45,6 +45,11 @@ class CatsController < ApplicationController
     end
   end
 
+  def destroy
+    Cat.find(params[:id]).destroy
+    redirect_to cats_url
+  end
+
   private
 
   def cat_params
