@@ -49,6 +49,7 @@
 </table>
 <br>
 
+<% if current_user.id == @cat.user_id %>
 <form action="<%= cat_url(@cat) %>" method="post">
   <input type="hidden" name="_method" value="delete">
 
@@ -60,3 +61,4 @@
   <button>Delete this cat</button>
 
 </form>
+<% end %>

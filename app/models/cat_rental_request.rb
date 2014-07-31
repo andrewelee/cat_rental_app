@@ -24,33 +24,31 @@ class CatRentalRequest < ActiveRecord::Base
     end
   end
 
-  def overlapping_requests
-    our_cat_requests = CatRentalRequest.joins(
-    "JOIN cats ON cat_id = cats.id")
-    .where("cat_id = ?", self.cat_id)
-
-    overlapping = CatRentalRequest.where(
-      "NOT (cat_rental_requests.start_date >= #{self.end_date} OR cat_rental_requests.end_date <= #{self.start_date})"
-      )
-
-      p overlapping
-
-      # AND cat_rental_requests.status = 'APPROVED'
-
-      overlapping_requests = []
-
-      our_cat_requests.each do |request|
-        if overlapping.include?(request)
-          overlapping_requests << request
-        end
-      end
-
-      overlapping_requests
-  end
-
   def overlapping_approved
     overlapping_requests.select { |request| request.status == "APPROVED" }
   end
+
+  def overlapping_requests
+    overlaps = []
+
+    same_cat_requests.each do |request|
+      if same_time_requests.include?(request)
+        overlaps << request
+      end
+    end
+
+    overlaps
+  end
+
+  def same_cat_requests
+    CatRentalRequest.where("cat_id = #{self.cat_id}")
+  end
+
+  def same_time_requests
+    CatRentalRequest.where("NOT (start_date >= ? OR end_date <= ?)", self.end_date, self.start_date)
+  end
+
+
 
   def approve!
     self.overlapping_requests.each do |request|

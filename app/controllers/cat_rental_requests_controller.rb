@@ -1,4 +1,5 @@
 class CatRentalRequestsController < ApplicationController
+  before_action :not_logged_in_redirect
 
   def index
     @rental_requests = CatRentalRequest.all
