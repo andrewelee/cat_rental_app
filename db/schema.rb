@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140731165308) do
+ActiveRecord::Schema.define(version: 20140731204306) do
 
   create_table "cat_rental_requests", force: true do |t|
     t.integer  "cat_id",                         null: false
@@ -40,15 +40,20 @@ ActiveRecord::Schema.define(version: 20140731165308) do
 
   add_index "cats", ["name"], name: "index_cats_on_name"
 
-  create_table "users", force: true do |t|
-    t.string   "username",        null: false
-    t.string   "password_digest", null: false
-    t.string   "session_token"
+  create_table "sessions", force: true do |t|
+    t.integer  "user_id"
+    t.string   "token"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "users", ["session_token"], name: "index_users_on_session_token", unique: true
+  create_table "users", force: true do |t|
+    t.string   "username",        null: false
+    t.string   "password_digest", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   add_index "users", ["username"], name: "index_users_on_username"
 
 end

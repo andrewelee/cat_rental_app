@@ -6,11 +6,13 @@ class ApplicationController < ActionController::Base
 
   def login!(user)
     @current_user = user
-    session[:session_token] = user.session_token
+    session[:session_token] = Session.create!( {
+      user_id: user.id,
+      token: User.generate_session_token } ).token
   end
 
   def logout!(user)
-    current_user.reset_session_token!
+    current_user.delete_session_token!(session[:session_token])
     session[:session_token] = nil
   end
 
@@ -20,7 +22,7 @@ class ApplicationController < ActionController::Base
 
   def current_user
     return nil if session[:session_token].nil?
-    @current_user ||= User.find_by_session_token(session[:session_token])
+    @current_user ||= Session.find_by_token(session[:session_token]).try(:user)
   end
 
   def not_logged_in_redirect

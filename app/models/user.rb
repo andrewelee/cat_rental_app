@@ -1,5 +1,4 @@
 class User < ActiveRecord::Base
-  after_initialize :ensure_session_token
 
   has_many(
     :cats,
@@ -7,10 +6,14 @@ class User < ActiveRecord::Base
     foreign_key: :user_id,
     primary_key: :id
   )
-  
+
   has_many(
-  :requests,
-  class_name: "CatRentalRequest",
+    :requests,
+    class_name: "CatRentalRequest"
+  )
+
+  has_many(
+    :sessions
   )
 
   def self.generate_session_token
@@ -26,10 +29,8 @@ class User < ActiveRecord::Base
     end
   end
 
-  def reset_session_token!
-    self.session_token = self.class.generate_session_token
-    self.save!
-    self.session_token
+  def delete_session_token!(session_token)
+    Session.find_by_token(session_token).delete
   end
 
   def password=(password)
@@ -38,10 +39,6 @@ class User < ActiveRecord::Base
 
   def is_password?(password)
     BCrypt::Password.new(self.password_digest).is_password?(password)
-  end
-
-  def ensure_session_token
-    self.session_token ||= self.class.generate_session_token
   end
 
 end

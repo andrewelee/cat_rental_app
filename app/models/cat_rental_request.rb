@@ -30,14 +30,11 @@ class CatRentalRequest < ActiveRecord::Base
 
   def overlapping_requests
     overlaps = []
-
     same_cat_requests.each do |request|
       if same_time_requests.include?(request)
         overlaps << request
       end
     end
-
-    overlaps
   end
 
   def same_cat_requests
