@@ -1,0 +1,12 @@
+<h1>Request number <%= @rental_request.id %></h1>
+
+<%= Cat.find(@rental_request.cat_id).name %><br>
+Start date: <%= @rental_request.start_date %><br>
+End date: <%= @rental_request.end_date %><br>
+Status: <%= @rental_request.status %>
+
+<% if current_user.id == @rental_request.requester.id %>
+  <%= button_to "Cancel your request",
+      cat_rental_request_url,
+      method: :delete %>
+<% end %>

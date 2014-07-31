@@ -27,12 +27,23 @@
 <table>
   Current rental requests for <%= @cat.name %>
   <% @cat.requests.sort_by { |request| request.start_date }.each do |request| %>
-    <% if request.status == "APPROVED" %>
     <tr>
       <td><%= request.start_date %></td>
       <td><%= request.end_date %></td>
+      <td><%= User.find(request.user_id).username%></td>
+      <td><%= request.status %></td>
+
+      <td>
+        <% if current_user.id == @cat.user_id && request.status == "PENDING" %>
+          <%= button_to "Approve", approve_url(request), method: :patch %>
+        <% end%>
+      </td>
+      <td>
+        <% if current_user.id == @cat.user_id && request.status == "PENDING" %>
+          <%= button_to "Deny", deny_url(request), method: :patch %>
+        <% end%>
+      </td>
     </tr>
-    <% end %>
   <% end %>
 
 </table>
@@ -40,6 +51,11 @@
 
 <form action="<%= cat_url(@cat) %>" method="post">
   <input type="hidden" name="_method" value="delete">
+
+  <input
+    type="hidden"
+    name="authenticity_token"
+    value="<%= form_authenticity_token %>">
 
   <button>Delete this cat</button>
 

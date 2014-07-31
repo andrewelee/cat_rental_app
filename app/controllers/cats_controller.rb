@@ -2,6 +2,8 @@ class CatsController < ApplicationController
 
   COLORS = ["Brown", "Black", "Grey", "Orange", "Calico", "White"]
 
+  before_action :must_be_owner,  only: [:update, :edit, :destroy]
+
   def index
     @cats = Cat.all
     render :index
@@ -20,6 +22,7 @@ class CatsController < ApplicationController
 
   def create
     @cat = Cat.new(cat_params)
+    @cat.user_id = current_user.id
 
     if @cat.save
       redirect_to cat_url(@cat)
@@ -61,6 +64,12 @@ class CatsController < ApplicationController
       :color,
       :description
     )
+  end
+
+  def must_be_owner
+     unless current_user.id == Cat.find(params[:id]).user_id
+       redirect_to new_session_url
+     end
   end
 
 end

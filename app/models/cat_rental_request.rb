@@ -1,5 +1,5 @@
 class CatRentalRequest < ActiveRecord::Base
-  validates :cat_id, :start_date, :end_date, :status, presence: true
+  validates :cat_id, :start_date, :end_date, :status, :user_id, presence: true
   validates_inclusion_of :status, in: %w( PENDING APPROVED DENIED )
   validate :good_date_range
   validate :no_overlapping_requests
@@ -9,6 +9,13 @@ class CatRentalRequest < ActiveRecord::Base
     :class_name => "Cat",
     :foreign_key => :cat_id,
     :primary_key => :id
+  )
+
+  belongs_to(
+    :requester,
+    class_name: "User",
+    foreign_key: :user_id,
+    primary_key: :id
   )
 
   def good_date_range
