@@ -2,6 +2,12 @@
 <html>
 <head>
   <title>CatRentalApp</title>
+  <% if !current_user.nil?%>
+  Hello, <%= current_user.username %>
+  <br>
+  <%= button_to "Logout", session_url, method: :delete %>
+  <% end%>
+
 </head>
 <body>
 

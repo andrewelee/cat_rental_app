@@ -1,6 +1,6 @@
 class CatsController < ApplicationController
 
-  COLORS = ["Brown", "Black", "Grey", "Orange", "Calico"]
+  COLORS = ["Brown", "Black", "Grey", "Orange", "Calico", "White"]
 
   def index
     @cats = Cat.all
